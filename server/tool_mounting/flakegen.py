@@ -54,7 +54,7 @@ def render_flake(template_path: Path, system: str, paths: list[str], nixpkgs_url
 
 
 def generate_flake(repo_root: Path) -> None:
-    """Generate ``src/server/flake.nix`` and fail when no CLI paths are configured."""
+    """Generate ``server/flake.nix`` and fail when no CLI paths are configured."""
     system = os.getenv("NIX_SYSTEM", "x86_64-linux")
     nixpkgs_url = os.getenv("NIXPKGS_URL", "github:NixOS/nixpkgs")
     tools_dir = repo_root / "tools"
@@ -71,7 +71,7 @@ def generate_flake(repo_root: Path) -> None:
 
 
 def main() -> None:
-    """Command-line entrypoint for generating ``src/server/flake.nix``."""
+    """Command-line entrypoint for generating ``server/flake.nix``."""
     generate_flake(Path(__file__).resolve().parents[2])
 
 

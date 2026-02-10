@@ -4,7 +4,7 @@ services:
   flakegen:
     container_name: clai-flakegen
     image: python:3.12-alpine
-    working_dir: /workspace/src/server
+    working_dir: /workspace/server
     environment:
       NIXPKGS_URL: ${NIXPKGS_URL:-github:NixOS/nixpkgs/nixos-24.11}
       NIX_SYSTEM: ${NIX_SYSTEM:-x86_64-linux}
@@ -21,13 +21,13 @@ services:
   clai:
     container_name: clai
     image: ghcr.io/nixos/nix:latest
-    working_dir: /workspace/src/server
+    working_dir: /workspace/server
     entrypoint:
       [
         "nix",
         "shell",
         "--no-write-lock-file",
-        "path:/workspace/src/server#cli",
+        "path:/workspace/server#cli",
         "-c",
         "sh",
         "-ceu",

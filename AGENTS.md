@@ -18,16 +18,16 @@ flowchart TB
 ## Testing Specification
 ### Startup
 - Fast build: `docker compose up -d`
-  Fastest, keep everything running -- If `clai` is already running, tool changes in `src/tools` will not be reloaded.
+  Fastest, keep everything running -- If `clai` is already running, tool changes in `tools` will not be reloaded.
 - Soft refresh: `docker compose up -d --force-recreate flakegen clai`
-  Use after tool spec/source changes when you want fresh registration from `src/tools` without wiping `/nix`.
+  Use after tool spec/source changes when you want fresh registration from `tools` without wiping `/nix`.
 - Hard refresh: `docker compose down --remove-orphans --volumes`, then `docker compose up -d --pull always --force-recreate flakegen clai`
   Use for clean CLI package/toolchain reinstall and re-registration when Nix cache state may be stale or suspect.
 
 ### Validation Checks
 After startup:
 - `http://localhost:${FASTMCP_HOST_PORT:-8000}/mcp` should provide access to our MCP Server's tools. Test connectivity by trying to use any tool.
-- logs should show that <src/tools/core/healthcheck/test nested tool calls> was called and displays no functional defects, demonstrating a nested tool call successfully took place.
+- logs should show that <tools/core/healthcheck/test nested tool calls> was called and displays no functional defects, demonstrating a nested tool call successfully took place.
 - logs should show a count of successful and failed tool registrations, as well as a catalog of available tools with names and descriptions.
 - If you have access to an LM, have it try and call any number of tools to 1. test the MCP Server's availability and 2. test the function of the tool. 
 

@@ -1,5 +1,5 @@
 # MCP tool server flake template
-# Rendered by src/server/tool_mounting/flakegen.py.
+# Rendered by server/tool_mounting/flakegen.py.
 {
   description = "Modular CLI package set for the local dev container";
 
