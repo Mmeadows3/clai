@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from tool_mounting.tool_runtime import CallToolFn, LogFn
@@ -22,6 +23,26 @@ TOOL_TYPE_MOUNTS: dict[str, ToolMountFn] = {
 TOOL_SPEC_ERROR_MISSING_NAME = "missing_name"
 TOOL_SPEC_ERROR_MISSING_TYPE = "missing_type"
 TOOL_SPEC_ERROR_UNSUPPORTED_TYPE = "unsupported_type"
+TOOL_INVOCATION_TAG = "~"
+
+
+def _primary_tool_alias(tool_name: str) -> str:
+    """Return a short alias token for `~`-style tool invocation hints."""
+    final_segment = tool_name.rsplit(".", 1)[-1]
+    token = re.sub(r"[^a-z0-9_-]", "", final_segment.lower())
+    return token or "tool"
+
+
+def _with_tilde_routing_hint(tool_name: str, description: str) -> str:
+    """Append one short `~` routing hint so LMs can map tag + context to tools."""
+    alias = _primary_tool_alias(tool_name)
+    hint = (
+        f"Routing hint: {TOOL_INVOCATION_TAG}{alias} refers to this tool! Look for input in surrounding text."
+    )
+    base = description.strip()
+    if not base:
+        return hint
+    return f"{base} {hint}"
 
 
 def validate_tool_spec(raw_spec: dict[str, Any]) -> tuple[ToolSpec | None, str | None]:
@@ -63,9 +84,14 @@ def _register_mounted_tool(
         payload = {} if input is None else input
         return mounted["runner"](payload)
 
+    description = _with_tilde_routing_hint(
+        tool_name=mounted["name"],
+        description=str(mounted["description"] or ""),
+    )
+
     mcp.tool(
         name=mounted["name"],
-        description=mounted["description"] or None,
+        description=description or None,
         meta=mounted["meta"],
     )(_tool)
     state["tool_runner_registry"][mounted["name"]] = mounted["runner"]
