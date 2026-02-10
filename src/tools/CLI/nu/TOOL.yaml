@@ -1,0 +1,11 @@
+﻿name: "cli.nu"
+description: "Run Nushell commands and scripts."
+type: "cli"
+command: "nu"
+inputs:
+  args: "List of Nushell flags and script arguments."
+  stdin: "Optional stdin string for Nu pipelines."
+  cwd: "Optional working directory."
+outputs: "Nushell stdout (tables, text, or nuon)."
+nix_package: "nushell"
+

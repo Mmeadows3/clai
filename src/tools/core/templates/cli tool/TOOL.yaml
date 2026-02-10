@@ -1,0 +1,13 @@
+name: "core.templates.cli_tool"
+description: "Template CLI tool that returns a boilerplate healthcheck message."
+type: "cli"
+command: "echo"
+inputs:
+  args: "Optional list of CLI arguments."
+  stdin: "Optional stdin string passed to the process."
+  cwd: "Optional working directory."
+outputs:
+  stdout: "Process stdout text."
+  stderr: "Process stderr text."
+  exit_code: "Process exit code."
+nix_package: "name of nix package to install for this tool"

@@ -1,0 +1,11 @@
+﻿name: "cli.wc"
+description: "Count lines, words, and bytes."
+type: "cli"
+command: "wc"
+inputs:
+  args: "List of wc flags and paths."
+  stdin: "Optional stdin string to count."
+  cwd: "Optional working directory."
+outputs: "Counts on stdout."
+nix_package: "coreutils"
+

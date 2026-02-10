@@ -1,0 +1,11 @@
+﻿name: "cli.rg"
+description: "Ripgrep search."
+type: "cli"
+command: "rg"
+inputs:
+  args: "List of ripgrep flags and patterns."
+  stdin: "Optional stdin for streaming search."
+  cwd: "Optional working directory."
+outputs: "Search matches on stdout."
+nix_package: "ripgrep"
+

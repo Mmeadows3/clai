@@ -1,0 +1,12 @@
+﻿name: "cli.man"
+description: "Display man pages."
+type: "cli"
+command: "man"
+inputs:
+  args: "Man page name and options."
+  stdin: "Optional stdin string (rare for man)."
+  cwd: "Optional working directory."
+outputs: "Man page output on stdout."
+nix_package: "man-db"
+nix_expr: 'pkgs."man-pages"'
+

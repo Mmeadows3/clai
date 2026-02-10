@@ -1,0 +1,11 @@
+﻿name: "cli.tldr"
+description: "Show simplified man pages (tldr)."
+type: "cli"
+command: "tldr"
+inputs:
+  args: "Optional command or topic to lookup."
+  stdin: "Optional stdin string if supported by tldr."
+  cwd: "Optional working directory."
+outputs: "tldr output on stdout."
+nix_package: "tldr"
+

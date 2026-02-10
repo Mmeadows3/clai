@@ -1,0 +1,11 @@
+﻿name: "cli.curl"
+description: "Transfer data to or from a URL."
+type: "cli"
+command: "curl"
+inputs:
+  args: "List of curl flags and URL(s)."
+  stdin: "Optional stdin payload for --data-binary @- workflows."
+  cwd: "Optional working directory."
+outputs: "Response body and/or transfer info on stdout."
+nix_package: "curl"
+

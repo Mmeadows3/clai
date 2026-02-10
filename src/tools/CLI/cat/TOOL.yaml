@@ -1,0 +1,11 @@
+﻿name: "cli.cat"
+description: "Concatenate and print files to stdout."
+type: "cli"
+command: "cat"
+inputs:
+  args: "List of file paths or options."
+  stdin: "Optional stdin string if no files are provided."
+  cwd: "Optional working directory."
+outputs: "File contents on stdout."
+nix_package: "coreutils"
+

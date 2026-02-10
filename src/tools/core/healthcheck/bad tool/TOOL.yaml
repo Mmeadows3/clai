@@ -1,0 +1,5 @@
+name: "core.healthcheck.bad_type"
+description: "Intentional unsupported tool type for validation."
+type: "invalid_type"
+source: |
+  This tool should never register because its type is unsupported.

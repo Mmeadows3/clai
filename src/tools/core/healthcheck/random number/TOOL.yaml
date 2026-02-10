@@ -1,0 +1,9 @@
+name: "core.healthcheck.random_number"
+description: "Generate a random integer between min and max via the nushell MCP tool."
+type: "python"
+source: "tool.py"
+inputs:
+  min: "Minimum integer value (inclusive)."
+  max: "Maximum integer value (inclusive)."
+outputs:
+  result: "Random integer represented as text."

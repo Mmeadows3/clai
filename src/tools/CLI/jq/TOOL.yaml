@@ -1,0 +1,11 @@
+﻿name: "cli.jq"
+description: "Command-line JSON processor."
+type: "cli"
+command: "jq"
+inputs:
+  args: "JQ filter and options."
+  stdin: "JSON input string."
+  cwd: "Optional working directory."
+outputs: "Filtered JSON output on stdout."
+nix_package: "jq"
+

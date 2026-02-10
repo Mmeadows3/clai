@@ -1,0 +1,66 @@
+name: mcp-toolset
+
+services:
+  flakegen:
+    container_name: clai-flakegen
+    image: python:3.12-alpine
+    working_dir: /workspace/src/server
+    environment:
+      NIXPKGS_URL: ${NIXPKGS_URL:-github:NixOS/nixpkgs/nixos-24.11}
+      NIX_SYSTEM: ${NIX_SYSTEM:-x86_64-linux}
+    volumes:
+      - .:/workspace
+    command:
+      [
+        "sh",
+        "-ceu",
+        "python -m pip install pyyaml --quiet --no-cache-dir --disable-pip-version-check --root-user-action=ignore >/dev/null; exec python -m tool_mounting.flakegen"
+      ]
+    restart: "no"
+
+  clai:
+    container_name: clai
+    image: ghcr.io/nixos/nix:latest
+    working_dir: /workspace/src/server
+    entrypoint:
+      [
+        "nix",
+        "shell",
+        "--no-write-lock-file",
+        "path:/workspace/src/server#cli",
+        "-c",
+        "sh",
+        "-ceu",
+        "python -m pip install mcp pyyaml --target /tmp/mcp-py --upgrade --no-cache-dir --disable-pip-version-check --root-user-action=ignore >/dev/null; export PYTHONPATH=\"/tmp/mcp-py:$${PYTHONPATH:-}\"; exec \"$@\"",
+        "sh"
+      ]
+    command:
+      [
+        "python",
+        "-c",
+        "from bootstrap import serve_mcp_with_bootstrap_validation; raise SystemExit(serve_mcp_with_bootstrap_validation())"
+      ]
+    environment:
+      MCP_SERVER_URL: ${MCP_SERVER_URL:-http://clai:8000/mcp}
+      NIX_CONFIG: |-
+        experimental-features = nix-command flakes
+        warn-dirty = false
+        build-users-group =
+    volumes:
+      - nix_store:/nix
+      - .:/workspace:ro
+    ports:
+      - "${FASTMCP_HOST_PORT:-8000}:8000"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      flakegen:
+        condition: service_completed_successfully
+
+volumes:
+  nix_store:
+

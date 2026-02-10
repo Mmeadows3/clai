@@ -1,0 +1,11 @@
+﻿name: "cli.echo"
+description: "Write arguments to stdout."
+type: "cli"
+command: "echo"
+inputs:
+  args: "List of strings to print."
+  stdin: "Ignored; echo uses args."
+  cwd: "Optional working directory."
+outputs: "Echoed arguments on stdout."
+nix_package: "coreutils"
+

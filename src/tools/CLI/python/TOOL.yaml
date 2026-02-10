@@ -1,0 +1,11 @@
+﻿name: "cli.python"
+description: "Run Python scripts or modules."
+type: "cli"
+command: "python"
+inputs:
+  args: "List of Python flags, -c/-m, or script path."
+  stdin: "Optional stdin for Python scripts."
+  cwd: "Optional working directory."
+outputs: "Python stdout and stderr as text."
+nix_expr: "(pkgs.python3.withPackages (ps: [ ps.pip ]))"
+

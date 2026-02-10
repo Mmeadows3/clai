@@ -1,0 +1,11 @@
+﻿name: "cli.fzf"
+description: "Interactive fuzzy finder."
+type: "cli"
+command: "fzf"
+inputs:
+  args: "Optional list of fzf flags."
+  stdin: "Optional stdin list to filter."
+  cwd: "Optional working directory."
+outputs: "Selected entries on stdout."
+nix_package: "fzf"
+

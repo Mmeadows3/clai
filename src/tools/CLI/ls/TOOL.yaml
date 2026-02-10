@@ -1,0 +1,11 @@
+﻿name: "cli.ls"
+description: "List directory contents."
+type: "cli"
+command: "ls"
+inputs:
+  args: "List of flags and paths."
+  stdin: "Ignored; ls uses args."
+  cwd: "Optional working directory."
+outputs: "Directory listing on stdout."
+nix_package: "coreutils"
+
