@@ -37,7 +37,7 @@ After startup:
 ## Standards
 - Spec-Driven Development -- Always use the Solution Specification section to give yourself context of the structure and overall function of the feature scope when working on the project. Use PLANS.md when appropriate as a transient short term memory, like for saving proposals for user approval or keeping a to-do list.
 - Test-Driven Development -- validate as you go referencing the Testing Specification section for guidance.
-- User Cognitive Ownership -- A human should always intuitively understand and approve a new feature/spec/validation pathway.
+- User Cognitive Ownership -- Ensure a human always understands a new feature/spec/validation pathway via explicit approval.
 
 ## Boundaries
 - Don't add new logic, classes, or files without a really good reason to do so or explicit permission -- prefer simplicity and minimalism.
