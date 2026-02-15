@@ -20,10 +20,10 @@ flowchart TB
 #### Fast build:
 `docker compose up -d`
 Fastest, keep everything running -- If `clai` is already running, tool changes in `tools` will not be reloaded.
-#### Soft refresh
+#### Soft refresh:
 `docker compose up -d --force-recreate flakegen clai`
 Use after tool spec/source changes when you want fresh registration from `tools` without wiping `/nix`.
-#### Hard refresh
+#### Hard refresh:
 `docker compose down --remove-orphans --volumes`, then `docker compose up -d --pull always --force-recreate flakegen clai`
 Use for clean CLI package/toolchain reinstall and re-registration when Nix cache state may be stale or suspect.
 
