@@ -10,8 +10,8 @@ flowchart TB
   NIXCLI["MCP tool server hosted on linux box"]
   AGENT["Entrypoint: external LM with access to our docker-hosted MCP Server"]
 
-  AGENT -->|structured input JSON| NIXCLI
-  NIXCLI -->|structured output JSON| AGENT
+  AGENT --> NIXCLI
+  NIXCLI --> AGENT
   TOOLS -->|tool configs autowired to MCP tools on startup| NIXCLI
 ```
 
