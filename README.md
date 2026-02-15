@@ -6,13 +6,13 @@ Agents connect to a locally hosted MCP server that hosts custom tools ranging fr
 
 ```mermaid
 flowchart TB
-  TOOLS["decoupled tool config MCP tool catalog"]
+  TOOLS["decoupled tool directory"]
   NIXCLI["MCP tool server hosted on linux box"]
   AGENT["Entrypoint: external LM with access to our docker-hosted MCP Server"]
 
-  AGENT --> NIXCLI
-  NIXCLI --> AGENT
-  TOOLS -->|tool configs autowired to MCP tools on startup| NIXCLI
+  AGENT -->|MCP| NIXCLI
+  NIXCLI -->|MCP| AGENT
+  TOOLS -->|tool directory autowired to MCP tool catalog on startup| NIXCLI
 ```
 
 ## Testing Specification
