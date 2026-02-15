@@ -1,5 +1,5 @@
 ## Purpose
-A portable, version-controlled LM toolset built for reliable CLI interaction and easy extension.
+A portable, version-controlled LM toolset built for safe, reliable CLI interaction and easy extension.
 
 ## Solution Specification
 Agents connect to a locally hosted MCP server that hosts custom tools ranging from access to local CLI commands, to prompt extensions, to python script runners.
