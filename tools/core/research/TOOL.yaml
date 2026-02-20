@@ -1,0 +1,9 @@
+name: "core.research"
+description: "Research a query using web and local CLI docs to find existing tools, CLI usage, or third-party solutions."
+type: "markdown"
+source: "TOOL.md"
+inputs:
+  search_query: "describes the problem to research."
+outputs:
+  text: "Raw LM response offering solutions based on the research query."
+
