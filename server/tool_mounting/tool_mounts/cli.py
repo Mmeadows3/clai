@@ -65,7 +65,7 @@ def build_cli_mount(
         stdout = (result.stdout or "").rstrip()
         stderr = (result.stderr or "").rstrip()
         if result.returncode != 0:
-            log(f"[healthcheck] process failed: cmd={cmd[0]} exit={result.returncode}")
+            log(f"[cli-tool] process failed: cmd={cmd[0]} exit={result.returncode}")
         return {"stdout": stdout, "stderr": stderr, "exit_code": result.returncode}
 
     def _tool_runner(input: Any = None) -> dict[str, Any]:

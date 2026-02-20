@@ -1,5 +1,5 @@
 name: "core.templates.markdown_tool"
-description: "Template markdown tool that returns a boilerplate healthcheck message."
+description: "Template markdown tool that returns a boilerplate tool message."
 type: "markdown"
 source: "TOOL.md"
 inputs:
@@ -8,3 +8,4 @@ outputs:
   text: "Prompt text plus serialized input payload."
   input: "Structured input payload received by the tool."
   type: "Tool kind marker; for markdown tools this is 'markdown'."
+

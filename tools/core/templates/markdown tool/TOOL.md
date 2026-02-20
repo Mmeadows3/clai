@@ -5,7 +5,7 @@ Provide a template for future markdown tools.
 None
 
 ## Output
-A friendly healthcheck message (string)
+A friendly tool message (string)
 
 ## Instructions
-Return a boilerplate healthcheck message, like, 'Hello, world! I am working.'
+Return a boilerplate tool message, like, 'Hello, world! I am working.'

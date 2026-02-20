@@ -1,9 +1,10 @@
 name: "core.templates.prompt_tool"
-description: "Template prompt tool that returns a boilerplate healthcheck message."
+description: "Template prompt tool that returns a boilerplate tool message."
 type: "prompt"
 source: |
-  Return a boilerplate healthcheck message, like, 'Hello, world! I am working.'
+  Return a boilerplate tool message, like, 'Hello, world! I am working.'
 inputs:
   topic: "Optional topic or context included in the prompt input payload."
 outputs:
   text: "Prompt text plus serialized input payload for the calling LM to process."
+

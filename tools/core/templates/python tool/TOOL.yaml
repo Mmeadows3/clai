@@ -1,8 +1,9 @@
 name: "core.templates.python_tool"
-description: "Template python tool that returns a boilerplate healthcheck message."
+description: "Template python tool that returns a boilerplate tool message."
 type: "python"
 source: "tool.py"
 inputs:
   message: "Optional message to include in the returned payload."
 outputs:
   result: "Structured result from run(input, tools, cwd). Non-dict returns are wrapped as {result: ...}."
+
