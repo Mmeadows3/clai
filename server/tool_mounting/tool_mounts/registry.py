@@ -107,7 +107,7 @@ def _register_mounted_tool(
 
     mcp.tool(
         name=mounted["name"],
-        description=mounted["description"] or None,
+        description=description or None,
         meta=merged_meta,
     )(_tool)
     state["tool_runner_registry"][mounted["name"]] = mounted["runner"]
