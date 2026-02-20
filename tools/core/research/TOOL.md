@@ -12,9 +12,14 @@ A raw research response that helps decide whether to:
 
 ## Instructions
 Always research the provided `search_query` by using all of the following tools:
-- `~w3m` for web discovery and reading internet sources.
-- `~tldr` for tools by their command usage patterns and examples.
-- `~man` for seeing if an installed tool fits the solution by searching our installed tooling documentation.
+- `cli.w3m` for web discovery and reading internet sources.
+- `cli.tldr` for tools by their command usage patterns and examples.
+- `cli.man` for seeing if an installed tool fits the solution by searching our installed tooling documentation.
+
+Shorthand convention:
+- Treat `~w3m` as a cue to use `cli.w3m`.
+- Treat `~tldr` as a cue to use `cli.tldr`.
+- Treat `~man` as a cue to use `cli.man`.
 
 During research, determine:
 1. Whether an existing tool in this environment likely already fits the job.
