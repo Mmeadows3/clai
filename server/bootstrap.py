@@ -138,7 +138,7 @@ def run_bootstrap_validation_once() -> int:
     """Run one bootstrap validation pass against an already-running FastMCP server."""
     mcp_server_url = _resolve_mcp_server_url(DEFAULT_MCP_SERVER_URL)
     try:
-        anyio.run(_run_bootstrap_validation_once, mcp_server_url, build_state())
+        anyio.run(_run_bootstrap_validation_once, mcp_server_url)
     except Exception as exc:
         _log_startup_smoke_failure(exc)
         return 1
