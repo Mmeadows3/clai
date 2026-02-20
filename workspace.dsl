@@ -28,21 +28,6 @@ workspace "CLAI" "Domain-driven C4 model for the CLAI project." {
             description "High-level architecture: LM uses MCP server, server bootstraps from ./tools, and acceptance tests run through adapters."
         }
 
-        styles {
-            element "Person" {
-                background #08427b
-                color #ffffff
-                shape person
-            }
-            element "Software System" {
-                background #1168bd
-                color #ffffff
-            }
-            element "Container" {
-                background #438dd5
-                color #ffffff
-            }
-        }
     }
 
     configuration {
