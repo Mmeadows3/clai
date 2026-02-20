@@ -1,0 +1,20 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Tool Server - System Context"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>LM Clients</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>External language model<br />clients that discover and<br />invoke callable tools.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    2["<div style='font-weight: bold'>Acceptance Test Suite</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Future-state external<br />acceptance test suite that<br />validates server behavior<br />through the AT API.</div>"]
+    style 2 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    3["<div style='font-weight: bold'>Tool Definitions</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Version-controlled source of<br />tool definitions used during<br />server startup registration.</div>"]
+    style 3 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    4["<div style='font-weight: bold'>Tool Server</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Server that registers tools<br />at startup and exposes a<br />ready-to-call tool catalog.</div>"]
+    style 4 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    1-. "<div>Discovers and invokes tools<br />through</div><div style='font-size: 70%'>[MCP]</div>" .->4
+    2-. "<div>Validates behavior through</div><div style='font-size: 70%'>[AT API]</div>" .->4
+    3-. "<div>Provides tool definitions<br />during registration</div><div style='font-size: 70%'>[Registration input]</div>" .->4
+
+  end

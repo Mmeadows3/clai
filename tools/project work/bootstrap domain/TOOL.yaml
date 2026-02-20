@@ -1,0 +1,10 @@
+name: "project work.bootstrap domain"
+description: "Interview-driven DDD bootstrap that creates architecture/workspace.dsl and optionally exports Mermaid C4 views."
+type: "markdown"
+source: "TOOL.md"
+inputs:
+  project_dir: "Required. Absolute or repo-relative target project directory."
+outputs:
+  text: "Instructions for the calling LM to interview the user, create/update workspace.dsl, validate, and optionally export Mermaid."
+  input: "Structured input payload received by the tool."
+  type: "Tool kind marker; for markdown tools this is 'markdown'."

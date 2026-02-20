@@ -1,0 +1,40 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Tool Server - Container View: Startup Registration"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>LM Clients</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>External language model<br />clients that discover and<br />invoke callable tools.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    2["<div style='font-weight: bold'>Acceptance Test Suite</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Future-state external<br />acceptance test suite that<br />validates server behavior<br />through the AT API.</div>"]
+    style 2 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    3["<div style='font-weight: bold'>Tool Definitions</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Version-controlled source of<br />tool definitions used during<br />server startup registration.</div>"]
+    style 3 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    subgraph 4 ["Tool Server"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      10["<div style='font-weight: bold'>Acceptance Test API</div><div style='font-size: 70%; margin-top: 0px'>[Container: AT API]</div><div style='font-size: 80%; margin-top:10px'>API surface used by the<br />external acceptance test<br />suite.</div>"]
+      style 10 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Startup Orchestrator</div><div style='font-size: 70%; margin-top: 0px'>[Container: Startup process]</div><div style='font-size: 80%; margin-top:10px'>Coordinates startup so the<br />server reaches a ready<br />callable state.</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      6["<div style='font-weight: bold'>Tool Definition Loader</div><div style='font-size: 70%; margin-top: 0px'>[Container: Registration process]</div><div style='font-size: 80%; margin-top:10px'>Reads tool definitions from<br />the tool directory source.</div>"]
+      style 6 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      7["<div style='font-weight: bold'>Typed Mounting Pipeline</div><div style='font-size: 70%; margin-top: 0px'>[Container: Registration process]</div><div style='font-size: 80%; margin-top:10px'>Converts loaded definitions<br />into typed, callable tool<br />contracts.</div>"]
+      style 7 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      8["<div style='font-weight: bold'>Callable Tool Catalog</div><div style='font-size: 70%; margin-top: 0px'>[Container: Tool catalog]</div><div style='font-size: 80%; margin-top:10px'>In-memory callable catalog<br />produced during startup<br />registration.</div>"]
+      style 8 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      9["<div style='font-weight: bold'>Tool API</div><div style='font-size: 70%; margin-top: 0px'>[Container: MCP API]</div><div style='font-size: 80%; margin-top:10px'>Main API used by LM clients<br />to discover and invoke<br />callable tools.</div>"]
+      style 9 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    3-. "<div>Supplies definitions to</div><div style='font-size: 70%'>[File read]</div>" .->6
+    5-. "<div>Triggers loading of</div><div style='font-size: 70%'>[Startup control]</div>" .->6
+    6-. "<div>Passes parsed definitions to</div><div style='font-size: 70%'>[Registration handoff]</div>" .->7
+    7-. "<div>Registers callable tool<br />contracts in</div><div style='font-size: 70%'>[Registration write]</div>" .->8
+    9-. "<div>Resolves callable tools from</div><div style='font-size: 70%'>[Catalog lookup]</div>" .->8
+    10-. "<div>Exercises callable tool<br />operations through</div><div style='font-size: 70%'>[AT API]</div>" .->9
+    1-. "<div>Uses callable tool operations<br />through</div><div style='font-size: 70%'>[MCP]</div>" .->9
+    2-. "<div>Runs acceptance scenarios<br />through</div><div style='font-size: 70%'>[AT API]</div>" .->10
+
+  end
