@@ -1,0 +1,12 @@
+name: "core.contract.cli_contract"
+description: "CLI contract dummy that executes Nushell for acceptance execution probes."
+type: "cli"
+command: "nu"
+inputs:
+  args: "Nushell CLI args, typically -c with a short probe script."
+outputs:
+  stdout: "Nushell stdout text."
+  stderr: "CLI stderr text."
+  exit_code: "CLI exit code."
+nix_package: "nushell"
+

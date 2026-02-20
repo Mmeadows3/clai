@@ -1,4 +1,4 @@
-name: "core.healthcheck.test_nested_tool_calls"
+name: "core.contract.test_nested_tool_calls"
 description: "Call random-number twice through nested MCP calls and return their product."
 type: "python"
 source: "tool.py"
@@ -7,3 +7,4 @@ outputs:
   left_number: "First sampled integer."
   right_number: "Second sampled integer."
   product: "left_number multiplied by right_number."
+

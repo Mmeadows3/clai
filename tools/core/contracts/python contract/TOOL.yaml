@@ -1,0 +1,14 @@
+name: "core.contract.python_contract"
+description: "Python contract dummy that writes a probe marker for acceptance execution checks."
+type: "python"
+source: "tool.py"
+inputs:
+  value: "Optional string payload echoed in the response."
+  probe_file: "Optional absolute file path used to verify Python tool execution."
+  probe_token: "Optional token written to probe_file when provided."
+outputs:
+  tool_type: "Type marker for acceptance checks."
+  echoed_value: "Echoed payload value."
+  probe_written: "True when probe_file was written by this tool."
+  probe_token: "Echo of probe_token for contract assertions."
+

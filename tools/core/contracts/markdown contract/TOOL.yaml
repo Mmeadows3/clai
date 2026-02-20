@@ -1,0 +1,11 @@
+name: "core.contract.markdown_contract"
+description: "Markdown contract dummy for acceptance MCP contract tests."
+type: "markdown"
+source: "TOOL.md"
+inputs:
+  value: "Optional payload echoed in the generated input section."
+outputs:
+  text: "Prompt text plus serialized input payload."
+  input: "Structured input payload received by the tool."
+  type: "Tool kind marker; for markdown tools this is 'markdown'."
+

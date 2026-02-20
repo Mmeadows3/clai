@@ -1,0 +1,12 @@
+name: "core.contract.prompt_contract"
+description: "Prompt contract dummy for acceptance MCP contract tests."
+type: "prompt"
+source: |
+  Provide deterministic prompt instructions for acceptance MCP contract tests.
+inputs:
+  value: "Optional payload echoed in the generated input section."
+outputs:
+  text: "Prompt text plus serialized input payload for the calling LM to process."
+  input: "Structured input payload received by the tool."
+  type: "Tool kind marker; for prompt tools this is 'prompt'."
+

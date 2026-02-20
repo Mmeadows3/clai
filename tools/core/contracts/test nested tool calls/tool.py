@@ -25,13 +25,13 @@ def run(input: Mapping[str, Any], tools: Mapping[str, Any], tool_path) -> dict[s
 
     left_number = _parse_int(
         _tool_value(
-            tools["call_tool"]("core.healthcheck.random_number", {"min": 1, "max": 10})
+            tools["call_tool"]("core.contract.random_number", {"min": 1, "max": 10})
         ),
         "left_number",
     )
     right_number = _parse_int(
         _tool_value(
-            tools["call_tool"]("core.healthcheck.random_number", {"min": 1, "max": 10})
+            tools["call_tool"]("core.contract.random_number", {"min": 1, "max": 10})
         ),
         "right_number",
     )
@@ -41,3 +41,4 @@ def run(input: Mapping[str, Any], tools: Mapping[str, Any], tool_path) -> dict[s
         "right_number": right_number,
         "product": left_number * right_number,
     }
+
