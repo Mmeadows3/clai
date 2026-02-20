@@ -129,7 +129,7 @@ services:
       [
         "sh",
         "-ceu",
-        "python -m pip install pyyaml --quiet --no-cache-dir --disable-pip-version-check --root-user-action=ignore >/dev/null; python -m unittest discover -s tests -p \"acceptance_tests.py\" -v"
+        "python -m pip install pyyaml --quiet --no-cache-dir --disable-pip-version-check --root-user-action=ignore >/dev/null; python - <<'PY'\nimport sys\nimport unittest\n\nsuite = unittest.defaultTestLoader.discover('tests', pattern='acceptance_tests.py')\nresult = unittest.TestResult()\nsuite.run(result)\nfailed = len(result.failures) + len(result.errors)\nif failed == 0:\n    print(f'[validation] PASS acceptance tests={result.testsRun}')\n    raise SystemExit(0)\nprint(f'[validation] FAIL acceptance tests={result.testsRun} failures={len(result.failures)} errors={len(result.errors)}')\nfor case, traceback_text in result.failures + result.errors:\n    print(f'[validation] case={case.id()}')\n    print(traceback_text)\nraise SystemExit(1)\nPY"
       ]
     restart: "no"
     depends_on:
