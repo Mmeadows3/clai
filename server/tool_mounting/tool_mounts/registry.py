@@ -52,6 +52,10 @@ def _with_tilde_routing_hint(tool_name: str, description: str) -> str:
     return f"{base} {hint}"
 
 
+def _single_line(value: Any) -> str:
+    return " ".join(str(value).split())
+
+
 def validate_tool_spec(raw_spec: dict[str, Any]) -> tuple[ToolSpec | None, str | None]:
     """Normalize one parsed spec and return an error code when invalid."""
     spec: ToolSpec = dict(raw_spec)
@@ -84,6 +88,7 @@ def _register_mounted_tool(
     mcp: FastMCP,
     state: dict[str, Any],
     mounted: MountedTool,
+    log: LogFn,
 ) -> None:
     """Register one mounted tool with FastMCP and the runtime tool catalog."""
     existing_meta = mounted["meta"]
@@ -106,6 +111,11 @@ def _register_mounted_tool(
         meta=merged_meta,
     )(_tool)
     state["tool_runner_registry"][mounted["name"]] = mounted["runner"]
+    log(
+        "[tool] "
+        f"name={_single_line(mounted['name'])} "
+        f"description={_single_line(mounted['description'] or '-')}"
+    )
 
 
 def register_discovered_tools(
@@ -165,6 +175,7 @@ def register_discovered_tools(
             mcp,
             state,
             mounted,
+            log,
         )
 
 __all__ = [
