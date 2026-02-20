@@ -152,6 +152,15 @@ class McpProtocolTranslator:
             session_id=self._session_id,
         )
 
+    def list_tools(self) -> list[dict[str, Any]]:
+        listed = self.post_method("tools/list")
+        if not isinstance(listed.payload, dict):
+            return []
+        tools = listed.payload.get("result", {}).get("tools", [])
+        if not isinstance(tools, list):
+            return []
+        return [tool for tool in tools if isinstance(tool, dict)]
+
     def wait_for_initialize_healthcheck(
         self,
         *,
@@ -170,3 +179,12 @@ class McpProtocolTranslator:
                 last_error = exc
                 time.sleep(delay_seconds)
         raise AssertionError(f"startup initialize healthcheck failed: {last_error}")
+
+    def validate_startup_healthcheck(self) -> None:
+        initialized = self.wait_for_initialize_healthcheck()
+        if initialized.status_code != 200:
+            raise AssertionError(f"unexpected status for initialize: {initialized.status_code}")
+        if not isinstance(initialized.payload, dict):
+            raise AssertionError("initialize payload was not a JSON object")
+        if "result" not in initialized.payload:
+            raise AssertionError("initialize payload missing result")

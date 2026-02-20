@@ -21,28 +21,18 @@ class Acceptance01SmokeTests(unittest.TestCase):
         self.docs_adapter.validate_diagram_sync_smoke()
 
     def test_02_startup_initialize_healthcheck(self) -> None:
-        initialized = self.server_adapter.wait_for_initialize_healthcheck()
-        self.assertEqual(initialized.status_code, 200)
-        self.assertIsInstance(initialized.payload, dict)
-        self.assertIn("result", initialized.payload)
+        self.server_adapter.validate_startup_healthcheck()
 
 
 class Acceptance02ToolChecks(unittest.TestCase):
     def setUp(self) -> None:
         self.server_adapter = McpProtocolTranslator(McpTestConfig.from_env())
         self.tools_adapter = ToolsDirectoryAdapter(REPO_ROOT)
-        self.server_adapter.wait_for_initialize_healthcheck()
+        self.server_adapter.validate_startup_healthcheck()
         self.server_adapter.establish_ready_session()
 
     def test_01_tool_count(self) -> None:
-        listed = self.server_adapter.post_method("tools/list")
-
-        tools = (
-            listed.payload.get("result", {}).get("tools", [])
-            if isinstance(listed.payload, dict)
-            else []
-        )
-
+        tools = self.server_adapter.list_tools()
         expected_count = self.tools_adapter.count_supported_tools()
 
         self.assertEqual(len(tools), expected_count)
