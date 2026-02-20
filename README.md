@@ -64,7 +64,7 @@ Also refreshes generated Mermaid diagrams from `workspace.dsl`.
 ### Validation Checks
 Build-time validation is automatic:
 - `acceptance` runs `python -m unittest discover -s tests -p "acceptance_tests.py" -v`.
-- Acceptance executes smoke checks first (diagram sync invariants, MCP `initialize` healthcheck), then tool checks.
+- Acceptance executes smoke checks first (diagram sync invariants, MCP `initialize` startup probe), then tool checks.
 - user/LM checks `docker compose` exit codes and logs for pass/fail.
 
 ## Standards
