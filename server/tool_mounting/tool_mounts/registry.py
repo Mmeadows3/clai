@@ -12,6 +12,11 @@ from .prompt import build_prompt_mount
 from .python import build_python_mount
 from .types import FastMCP, MountedTool, ToolMountFn, ToolSpec
 
+GLOBAL_TOOL_HINT = (
+    "If a user prefixes text with '~', interpret that as an explicit request "
+    "to use one or more MCP tools to satisfy the request."
+)
+
 
 TOOL_TYPE_MOUNTS: dict[str, ToolMountFn] = {
     "cli": build_cli_mount,
@@ -58,6 +63,10 @@ def _register_mounted_tool(
     mounted: MountedTool,
 ) -> None:
     """Register one mounted tool with FastMCP and the runtime tool catalog."""
+    existing_meta = mounted["meta"]
+    merged_meta: dict[str, Any] = {"tool_usage_hint": GLOBAL_TOOL_HINT}
+    if isinstance(existing_meta, dict):
+        merged_meta.update(existing_meta)
 
     def _tool(input: Any = None) -> dict[str, Any]:
         payload = {} if input is None else input
@@ -66,7 +75,7 @@ def _register_mounted_tool(
     mcp.tool(
         name=mounted["name"],
         description=mounted["description"] or None,
-        meta=mounted["meta"],
+        meta=merged_meta,
     )(_tool)
     state["tool_runner_registry"][mounted["name"]] = mounted["runner"]
 
