@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from dataclasses import dataclass
 from typing import Any
 from urllib import request as urllib_request
@@ -87,6 +88,13 @@ class McpProtocolTranslator:
         self._config = config
         self._session_id: str | None = None
 
+    def _initialize_params(self, *, client_name: str) -> dict[str, Any]:
+        return {
+            "protocolVersion": self._config.protocol_version,
+            "capabilities": {},
+            "clientInfo": {"name": client_name, "version": "1.0"},
+        }
+
     def post_method(
         self,
         method: str,
@@ -104,8 +112,8 @@ class McpProtocolTranslator:
             request_payload["id"] = f"{method}-1"
 
         headers: dict[str, str] | None = None
-        if use_session:
-            headers = {"Mcp-Session-Id": self._session_id or ""}
+        if use_session and self._session_id:
+            headers = {"Mcp-Session-Id": self._session_id}
 
         status, body, response_headers = _post_json(
             self._config.mcp_url,
@@ -121,11 +129,7 @@ class McpProtocolTranslator:
     def establish_ready_session(self) -> McpStepResult:
         initialized = self.post_method(
             "initialize",
-            params={
-                "protocolVersion": self._config.protocol_version,
-                "capabilities": {},
-                "clientInfo": {"name": "clai-acceptance-suite", "version": "1.0"},
-            },
+            params=self._initialize_params(client_name="clai-acceptance-suite"),
             use_session=False,
         )
         notified = self.post_method(
@@ -147,3 +151,22 @@ class McpProtocolTranslator:
             },
             session_id=self._session_id,
         )
+
+    def wait_for_initialize_healthcheck(
+        self,
+        *,
+        max_attempts: int = 40,
+        delay_seconds: float = 2.0,
+    ) -> McpStepResult:
+        last_error: Exception | None = None
+        for _ in range(max_attempts):
+            try:
+                return self.post_method(
+                    "initialize",
+                    params=self._initialize_params(client_name="clai-startupsmoke"),
+                    use_session=False,
+                )
+            except Exception as exc:  # pragma: no cover - network readiness edge
+                last_error = exc
+                time.sleep(delay_seconds)
+        raise AssertionError(f"startup initialize healthcheck failed: {last_error}")

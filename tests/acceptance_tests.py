@@ -5,19 +5,36 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from acceptance_server_adapter import McpProtocolTranslator, McpTestConfig
-from acceptance_tools_adapter import ToolsDirectoryAdapter
+from adapters.acceptance_docs_adapter import DocsDiagramAdapter
+from adapters.acceptance_server_adapter import McpProtocolTranslator, McpTestConfig
+from adapters.acceptance_tools_adapter import ToolsDirectoryAdapter
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-class AcceptanceTests(unittest.TestCase):
+class Acceptance01SmokeTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.docs_adapter = DocsDiagramAdapter(REPO_ROOT)
+        self.server_adapter = McpProtocolTranslator(McpTestConfig.from_env())
+
+    def test_01_docs_diagram_sync_smoke(self) -> None:
+        self.docs_adapter.validate_diagram_sync_smoke()
+
+    def test_02_startup_initialize_healthcheck(self) -> None:
+        initialized = self.server_adapter.wait_for_initialize_healthcheck()
+        self.assertEqual(initialized.status_code, 200)
+        self.assertIsInstance(initialized.payload, dict)
+        self.assertIn("result", initialized.payload)
+
+
+class Acceptance02ToolChecks(unittest.TestCase):
     def setUp(self) -> None:
         self.server_adapter = McpProtocolTranslator(McpTestConfig.from_env())
-        self.tools_adapter = ToolsDirectoryAdapter(Path(__file__).resolve().parents[1])
-        self.ready_session = self.server_adapter.establish_ready_session()
+        self.tools_adapter = ToolsDirectoryAdapter(REPO_ROOT)
+        self.server_adapter.wait_for_initialize_healthcheck()
+        self.server_adapter.establish_ready_session()
 
-    """Server tools/list count should match tools directory count."""
-    def test_tool_count(self) -> None:
-
+    def test_01_tool_count(self) -> None:
         listed = self.server_adapter.post_method("tools/list")
 
         tools = (

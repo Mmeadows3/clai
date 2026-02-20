@@ -11,7 +11,7 @@ services:
       [
         "sh",
         "-ceu",
-        "mkdir -p mermaid; rm -f mermaid/structurizr-*.mmd"
+        "rm -rf /workspace/.generated-docs /workspace/mermaid; mkdir -p /workspace/.generated-docs"
       ]
     restart: "no"
 
@@ -29,11 +29,28 @@ services:
         "-format",
         "mermaid",
         "-output",
-        "/workspace/mermaid"
+        "/workspace/.generated-docs"
       ]
     restart: "no"
     depends_on:
       diagramclean:
+        condition: service_completed_successfully
+
+  diagramsync:
+    container_name: clai-diagramsync
+    image: python:3.12-alpine
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command:
+      [
+        "sh",
+        "-ceu",
+        "python - <<'PY'\nfrom pathlib import Path\n\ntmp_dir = Path('/workspace/.generated-docs')\nmmd_path = tmp_dir / 'structurizr-main-overview.mmd'\nmmd = mmd_path.read_text(encoding='utf-8').rstrip()\nblock = f\"<!-- BEGIN:STRUCTURIZR_MAIN_OVERVIEW -->\\n```mermaid\\n{mmd}\\n```\\n<!-- END:STRUCTURIZR_MAIN_OVERVIEW -->\"\nfor doc in (Path('/workspace/README.md'), Path('/workspace/AGENTS.md')):\n    text = doc.read_text(encoding='utf-8')\n    start = '<!-- BEGIN:STRUCTURIZR_MAIN_OVERVIEW -->'\n    end = '<!-- END:STRUCTURIZR_MAIN_OVERVIEW -->'\n    i = text.find(start)\n    j = text.find(end)\n    if i == -1 or j == -1:\n        raise SystemExit(f'missing sync markers in {doc}')\n    j += len(end)\n    doc.write_text(text[:i] + block + text[j:], encoding='utf-8')\nfor p in tmp_dir.glob('*'):\n    if p.is_file():\n        p.unlink(missing_ok=True)\ntmp_dir.rmdir()\nPY"
+      ]
+    restart: "no"
+    depends_on:
+      diagramgen:
         condition: service_completed_successfully
 
   flakegen:
@@ -53,7 +70,7 @@ services:
       ]
     restart: "no"
     depends_on:
-      diagramgen:
+      diagramsync:
         condition: service_completed_successfully
 
   clai:
@@ -98,6 +115,26 @@ services:
     depends_on:
       flakegen:
         condition: service_completed_successfully
+
+  acceptance:
+    container_name: clai-acceptance
+    image: python:3.12-alpine
+    working_dir: /workspace
+    volumes:
+      - .:/workspace:ro
+    environment:
+      MCP_SERVER_URL: ${MCP_SERVER_URL:-http://clai:8000/mcp}
+      MCP_PROTOCOL_VERSION: ${MCP_PROTOCOL_VERSION:-2025-06-18}
+    command:
+      [
+        "sh",
+        "-ceu",
+        "python -m pip install pyyaml --quiet --no-cache-dir --disable-pip-version-check --root-user-action=ignore >/dev/null; python -m unittest discover -s tests -p \"acceptance_tests.py\" -v"
+      ]
+    restart: "no"
+    depends_on:
+      clai:
+        condition: service_started
 
 volumes:
   nix_store:
