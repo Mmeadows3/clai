@@ -9,6 +9,15 @@ from typing import Any
 from tool_mounting.tool_runtime import CallToolFn
 from .types import LogFn, MountedTool, ToolSpec
 
+PROMPT_TOOL_RESPONSE_HINT = (
+    "Tool behavior: this tool does not execute the task. "
+    "It only returns instructions for you (the calling LM) to follow using other tools."
+)
+
+PROMPT_TOOL_META_HINT = (
+    "Prompt/markdown tool: treat `text` as execution instructions, not a final answer."
+)
+
 
 def build_text_prompt_mount(
     tool: ToolSpec,
@@ -23,7 +32,10 @@ def build_text_prompt_mount(
     def _tool_runner(input: dict[str, Any] | None = None) -> dict[str, Any]:
         """Return prompt source text with the supplied structured input."""
         payload = input or {}
-        prompt = f"{prompt_text}\n\n---\ninput: {json.dumps(payload, ensure_ascii=True)}"
+        prompt = (
+            f"{PROMPT_TOOL_RESPONSE_HINT}\n\n"
+            f"{prompt_text}\n\n---\ninput: {json.dumps(payload, ensure_ascii=True)}"
+        )
         return {"text": prompt, "input": payload, "type": tool_kind}
 
     return {
@@ -31,7 +43,7 @@ def build_text_prompt_mount(
         "description": str(tool.get("description") or ""),
         "inputs_desc": tool.get("inputs"),
         "outputs_desc": tool.get("outputs"),
-        "meta": None,
+        "meta": {"prompt_tool_hint": PROMPT_TOOL_META_HINT},
         "runner": _tool_runner,
         "source": tool.get("source"),
         "source_path": source_path,
