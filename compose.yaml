@@ -93,7 +93,7 @@ services:
       [
         "python",
         "-c",
-        "from bootstrap import serve_mcp_with_bootstrap_validation; raise SystemExit(serve_mcp_with_bootstrap_validation())"
+        "from bootstrap import main; raise SystemExit(main())"
       ]
     environment:
       MCP_SERVER_URL: ${MCP_SERVER_URL:-http://clai:8000/mcp}
