@@ -12,21 +12,21 @@ from adapters.acceptance_tools_adapter import ToolsDirectoryAdapter
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
+def build_server_adapter() -> McpProtocolTranslator:
+    return McpProtocolTranslator(McpTestConfig.from_env())
+
+
 class Acceptance01SmokeTests(unittest.TestCase):
     def setUp(self) -> None:
         self.docs_adapter = DocsDiagramAdapter(REPO_ROOT)
-        self.server_adapter = McpProtocolTranslator(McpTestConfig.from_env())
 
     def test_01_docs_diagram_sync_smoke(self) -> None:
         self.docs_adapter.validate_diagram_sync_smoke()
 
-    def test_02_startup_initialize_healthcheck(self) -> None:
-        self.server_adapter.validate_startup_healthcheck()
-
 
 class Acceptance02ToolChecks(unittest.TestCase):
     def setUp(self) -> None:
-        self.server_adapter = McpProtocolTranslator(McpTestConfig.from_env())
+        self.server_adapter = build_server_adapter()
         self.tools_adapter = ToolsDirectoryAdapter(REPO_ROOT)
         self.server_adapter.validate_startup_healthcheck()
         self.server_adapter.establish_ready_session()

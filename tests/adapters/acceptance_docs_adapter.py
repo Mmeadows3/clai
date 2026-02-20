@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+DIAGRAM_BLOCK_START = "<!-- BEGIN:STRUCTURIZR_MAIN_OVERVIEW -->"
+DIAGRAM_BLOCK_END = "<!-- END:STRUCTURIZR_MAIN_OVERVIEW -->"
+
 
 class DocsDiagramAdapter:
     """Validates generated diagram embedding and cleanup invariants."""
@@ -26,16 +29,19 @@ class DocsDiagramAdapter:
         if readme_text != agents_text:
             raise AssertionError("README.md and AGENTS.md are out of sync")
 
-        start = "<!-- BEGIN:STRUCTURIZR_MAIN_OVERVIEW -->"
-        end = "<!-- END:STRUCTURIZR_MAIN_OVERVIEW -->"
-        if readme_text.count(start) != 1 or readme_text.count(end) != 1:
+        if readme_text.count(DIAGRAM_BLOCK_START) != 1 or readme_text.count(DIAGRAM_BLOCK_END) != 1:
             raise AssertionError("diagram markers missing or duplicated")
 
-        block_start = readme_text.find(start)
-        block_end = readme_text.find(end)
-        block = readme_text[block_start:block_end]
+        block = self._extract_diagram_block(readme_text)
         if "```mermaid" not in block or "graph " not in block:
             raise AssertionError("embedded mermaid diagram missing")
 
         if generated_docs.exists() or mermaid_dir.exists():
             raise AssertionError("temporary diagram artifacts were not cleaned up")
+
+    def _extract_diagram_block(self, readme_text: str) -> str:
+        block_start = readme_text.find(DIAGRAM_BLOCK_START)
+        block_end = readme_text.find(DIAGRAM_BLOCK_END, block_start)
+        if block_start == -1 or block_end == -1:
+            raise AssertionError("diagram markers missing")
+        return readme_text[block_start:block_end]

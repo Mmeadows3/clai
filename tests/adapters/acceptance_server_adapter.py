@@ -11,6 +11,10 @@ from urllib import request as urllib_request
 
 DEFAULT_MCP_URL = "http://localhost:8000/mcp"
 DEFAULT_PROTOCOL_VERSION = "2025-06-18"
+DEFAULT_REQUEST_HEADERS = {
+    "Accept": "application/json, text/event-stream",
+    "Content-Type": "application/json",
+}
 
 
 @dataclass(frozen=True)
@@ -33,52 +37,63 @@ class McpStepResult:
     session_id: str | None = None
 
 
-def _post_json(
-    url: str,
-    payload: dict[str, Any],
-    headers: dict[str, str] | None = None,
-) -> tuple[int, str, dict[str, str]]:
-    merged_headers = {
-        "Accept": "application/json, text/event-stream",
-        "Content-Type": "application/json",
-    }
-    if headers:
-        merged_headers.update(headers)
-    req = urllib_request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers=merged_headers,
-        method="POST",
-    )
-    with urllib_request.urlopen(req, timeout=10.0) as response:
-        body = response.read().decode("utf-8")
-        response_headers = {str(k): str(v) for k, v in response.headers.items()}
-        return int(response.status), body, response_headers
+@dataclass(frozen=True)
+class McpHttpResponse:
+    status_code: int
+    body: str
+    headers: dict[str, str]
 
 
-def _parse_json(body: str) -> Any:
-    stripped = body.strip()
-    if not stripped:
-        return None
-    return json.loads(stripped)
+class McpHttpTransport:
+    def __init__(self, mcp_url: str) -> None:
+        self._mcp_url = mcp_url
 
+    def post_json(
+        self,
+        payload: dict[str, Any],
+        headers: dict[str, str] | None = None,
+    ) -> McpHttpResponse:
+        merged_headers = dict(DEFAULT_REQUEST_HEADERS)
+        if headers:
+            merged_headers.update(headers)
+        req = urllib_request.Request(
+            self._mcp_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers=merged_headers,
+            method="POST",
+        )
+        with urllib_request.urlopen(req, timeout=10.0) as response:
+            return McpHttpResponse(
+                status_code=int(response.status),
+                body=response.read().decode("utf-8"),
+                headers={str(k): str(v) for k, v in response.headers.items()},
+            )
 
-def _parse_jsonrpc_from_http(body: str, headers: dict[str, str]) -> Any:
-    content_type = (headers.get("content-type") or headers.get("Content-Type") or "").lower()
-    if "text/event-stream" not in content_type:
-        return _parse_json(body)
+    def parse_jsonrpc_payload(self, response: McpHttpResponse) -> Any:
+        content_type = (
+            response.headers.get("content-type") or response.headers.get("Content-Type") or ""
+        ).lower()
+        if "text/event-stream" not in content_type:
+            return self._parse_json(response.body)
 
-    json_chunks: list[str] = []
-    for line in body.splitlines():
-        line = line.strip()
-        if not line.startswith("data:"):
-            continue
-        data_value = line[len("data:") :].strip()
-        if data_value:
-            json_chunks.append(data_value)
-    if not json_chunks:
-        return None
-    return _parse_json(json_chunks[-1])
+        json_chunks = []
+        for line in response.body.splitlines():
+            line = line.strip()
+            if not line.startswith("data:"):
+                continue
+            data_value = line[len("data:") :].strip()
+            if data_value:
+                json_chunks.append(data_value)
+        if not json_chunks:
+            return None
+        return self._parse_json(json_chunks[-1])
+
+    @staticmethod
+    def _parse_json(body: str) -> Any:
+        stripped = body.strip()
+        if not stripped:
+            return None
+        return json.loads(stripped)
 
 
 class McpProtocolTranslator:
@@ -86,6 +101,7 @@ class McpProtocolTranslator:
 
     def __init__(self, config: McpTestConfig) -> None:
         self._config = config
+        self._transport = McpHttpTransport(config.mcp_url)
         self._session_id: str | None = None
 
     def _initialize_params(self, *, client_name: str) -> dict[str, Any]:
@@ -115,16 +131,19 @@ class McpProtocolTranslator:
         if use_session and self._session_id:
             headers = {"Mcp-Session-Id": self._session_id}
 
-        status, body, response_headers = _post_json(
-            self._config.mcp_url,
+        response = self._transport.post_json(
             request_payload,
             headers=headers,
         )
-        payload = _parse_jsonrpc_from_http(body, response_headers)
-        session_id = response_headers.get("Mcp-Session-Id") or response_headers.get("mcp-session-id")
+        payload = self._transport.parse_jsonrpc_payload(response)
+        session_id = response.headers.get("Mcp-Session-Id") or response.headers.get("mcp-session-id")
         if isinstance(session_id, str) and session_id:
             self._session_id = session_id
-        return McpStepResult(status_code=status, payload=payload, session_id=self._session_id)
+        return McpStepResult(
+            status_code=response.status_code,
+            payload=payload,
+            session_id=self._session_id,
+        )
 
     def establish_ready_session(self) -> McpStepResult:
         initialized = self.post_method(
