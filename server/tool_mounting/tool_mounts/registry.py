@@ -14,7 +14,9 @@ from .types import FastMCP, MountedTool, ToolMountFn, ToolSpec
 
 GLOBAL_TOOL_HINT = (
     "If a user prefixes text with '~', interpret that as an explicit request "
-    "to use one or more MCP tools to satisfy the request."
+    "to use MCP tools. Treat the token after '~' as a partial tool reference, "
+    "search available tool names/descriptions for the best match, then call "
+    "the canonical tool name."
 )
 
 
