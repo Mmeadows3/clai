@@ -4,28 +4,32 @@ A portable, version-controlled LM toolset built for safe, reliable CLI interacti
 ## Solution Specification
 Agents connect to a locally hosted MCP server that hosts custom tools ranging from access to local CLI commands, to prompt extensions, to python script runners.
 
-```mermaid
-flowchart TB
-  TOOLS["decoupled tool directory"]
-  NIXCLI["MCP tool server hosted on linux box"]
-  AGENT["Entrypoint: external LM with access to our docker-hosted MCP Server"]
+Source of truth: `workspace.dsl`
 
-  AGENT -->|MCP| NIXCLI
-  NIXCLI -->|MCP| AGENT
-  TOOLS -->|tool directory autowired to MCP tool catalog on startup| NIXCLI
-```
+Generated Mermaid diagram:
+- `mermaid/structurizr-main-overview.mmd`
+
+Regenerate diagram from DSL (manual):
+- `docker run --rm -v "${PWD}:/workspace" structurizr/cli export -workspace /workspace/workspace.dsl -format mermaid -output /workspace/mermaid`
+
+Automatic generation on build/startup:
+- `docker compose up` now runs `diagramclean` then `diagramgen` before `flakegen`/`clai`.
+- Generation is idempotent: old `mermaid/structurizr-*.mmd` files are removed, then fresh outputs are exported from `workspace.dsl`.
 
 ## Testing Specification
 ### Startup
 #### Fast build:
 `docker compose up -d`
 Fastest, keep everything running -- If `clai` is already running, tool changes in `tools` will not be reloaded.
+Also refreshes generated Mermaid diagrams from `workspace.dsl`.
 #### Soft refresh:
 `docker compose up -d --force-recreate flakegen clai`
 Use after tool spec/source changes when you want fresh registration from `tools` without wiping `/nix`.
+Also refreshes generated Mermaid diagrams from `workspace.dsl`.
 #### Hard refresh:
 `docker compose down --remove-orphans --volumes`, then `docker compose up -d --pull always --force-recreate flakegen clai`
 Use for clean CLI package/toolchain reinstall and re-registration when Nix cache state may be stale or suspect.
+Also refreshes generated Mermaid diagrams from `workspace.dsl`.
 
 ### Validation Checks
 After startup:

@@ -1,0 +1,27 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["CLAI - Main Overview"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>LM</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>External LM actor that<br />discovers and invokes server<br />tools.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    2["<div style='font-weight: bold'>Server</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>MCP server that registers<br />tools at startup and exposes<br />callable tools.</div>"]
+    style 2 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    3["<div style='font-weight: bold'>Tools Directory</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Version-controlled ./tools<br />directory used to bootstrap<br />server tool registration.</div>"]
+    style 3 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    4["<div style='font-weight: bold'>Adapters</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Abstraction layer that allows<br />acceptance test suite to<br />operate at a level closer to<br />DSL.</div>"]
+    style 4 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    5["<div style='font-weight: bold'>Acceptance Test Suite</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>High-level, behavior-scoped<br />test suite for TDD.</div>"]
+    style 5 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    4-. "<div>MCP</div><div style='font-size: 70%'></div>" .->2
+    2-. "<div>MCP</div><div style='font-size: 70%'></div>" .->4
+    5-. "<div>Uses</div><div style='font-size: 70%'></div>" .->4
+    4-. "<div>Returns results</div><div style='font-size: 70%'></div>" .->5
+    1-. "<div>MCP</div><div style='font-size: 70%'></div>" .->2
+    2-. "<div>MCP</div><div style='font-size: 70%'></div>" .->1
+    3-. "<div>Bootstraps registration</div><div style='font-size: 70%'></div>" .->2
+    3-. "<div>RO</div><div style='font-size: 70%'></div>" .->4
+
+  end

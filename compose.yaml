@@ -1,6 +1,41 @@
 name: mcp-toolset
 
 services:
+  diagramclean:
+    container_name: clai-diagramclean
+    image: alpine:3.20
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command:
+      [
+        "sh",
+        "-ceu",
+        "mkdir -p mermaid; rm -f mermaid/structurizr-*.mmd"
+      ]
+    restart: "no"
+
+  diagramgen:
+    container_name: clai-diagramgen
+    image: structurizr/cli
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command:
+      [
+        "export",
+        "-workspace",
+        "/workspace/workspace.dsl",
+        "-format",
+        "mermaid",
+        "-output",
+        "/workspace/mermaid"
+      ]
+    restart: "no"
+    depends_on:
+      diagramclean:
+        condition: service_completed_successfully
+
   flakegen:
     container_name: clai-flakegen
     image: python:3.12-alpine
@@ -17,6 +52,9 @@ services:
         "python -m pip install pyyaml --quiet --no-cache-dir --disable-pip-version-check --root-user-action=ignore >/dev/null; exec python -m tool_mounting.flakegen"
       ]
     restart: "no"
+    depends_on:
+      diagramgen:
+        condition: service_completed_successfully
 
   clai:
     container_name: clai
